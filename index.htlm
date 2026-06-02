@@ -1,0 +1,2223 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐝🐝 Hive Clicker 🐝🐝</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Nunito:wght@400;600;700;800;900&display=swap');
+
+:root {
+  --gold: #FFD700;
+  --amber: #FFA500;
+  --honey: #C8860A;
+  --brown: #3D1F00;
+  --dark-bg: #0D0500;
+  --dark2: #130800;
+  --dark3: #1A0B00;
+  --panel: rgba(20, 8, 0, 0.92);
+  --panel2: rgba(30, 12, 0, 0.85);
+  --border: rgba(255, 170, 0, 0.2);
+  --border2: rgba(255, 200, 0, 0.35);
+  --text: #FFE8B0;
+  --text2: rgba(255, 220, 150, 0.6);
+  --text3: rgba(255, 220, 150, 0.35);
+  --green: #4DFF6E;
+  --green2: rgba(77, 255, 110, 0.15);
+  --red: #FF4444;
+  --red2: rgba(255, 68, 68, 0.15);
+  --blue: #44BBFF;
+  --blue2: rgba(68, 187, 255, 0.12);
+  --purple: #BB44FF;
+  --purple2: rgba(187, 68, 255, 0.12);
+  --glow-gold: 0 0 20px rgba(255, 200, 0, 0.3);
+  --glow-red: 0 0 20px rgba(255, 68, 68, 0.4);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-lg: 24px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255, 170, 0, 0.3); border-radius: 2px; }
+
+body {
+  background: var(--dark-bg);
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* BACKGROUND AMBIANCE */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 15% 50%, rgba(255, 140, 0, 0.06) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 20%, rgba(255, 200, 0, 0.04) 0%, transparent 45%),
+    radial-gradient(ellipse at 50% 100%, rgba(200, 100, 0, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* GRID LAYOUT */
+#app {
+  display: grid;
+  grid-template-columns: 280px 1fr 280px;
+  grid-template-rows: auto 1fr;
+  min-height: calc(100vh - 58px);
+  margin-top: 58px;
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ═══ TOP TABS ═══ */
+#topTabs {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  background: rgba(8, 3, 0, 0.97);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  height: 58px;
+  padding: 0 16px;
+  gap: 4px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+}
+
+.tablink {
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text2);
+  transition: all 0.2s;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.tablink:hover {
+  color: var(--gold);
+  background: rgba(255, 180, 0, 0.08);
+  border-color: var(--border);
+}
+
+.tablink.active {
+  color: var(--brown);
+  background: linear-gradient(135deg, var(--gold), var(--amber));
+  border-color: transparent;
+  box-shadow: 0 2px 12px rgba(255, 200, 0, 0.4);
+}
+
+/* ═══ HEADER ═══ */
+#hdr {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: linear-gradient(180deg, rgba(20,8,0,0.95) 0%, rgba(15,6,0,0.9) 100%);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+#hdr h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.3rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 8px rgba(255,180,0,0.3));
+  margin-right: 8px;
+}
+
+.hstats {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+  flex-wrap: wrap;
+}
+
+.hstat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 160, 0, 0.06);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  transition: all 0.2s;
+}
+
+.hstat:hover {
+  border-color: var(--border2);
+  background: rgba(255, 160, 0, 0.1);
+}
+
+.hstat-ico { font-size: 1.1rem; }
+
+.hsv {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--gold);
+  display: block;
+  line-height: 1;
+}
+
+.hsl {
+  font-size: 0.62rem;
+  color: var(--text3);
+  display: block;
+  line-height: 1;
+  margin-top: 1px;
+}
+
+.hbtns {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.hbtn {
+  background: rgba(255, 160, 0, 0.08);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 7px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.hbtn:hover {
+  background: rgba(255, 180, 0, 0.16);
+  border-color: var(--border2);
+  color: var(--gold);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 160, 0, 0.2);
+}
+
+.hbtn:active { transform: translateY(0); }
+
+/* ═══ LEFT PANEL — SHOP ═══ */
+#shop {
+  padding: 16px 12px;
+  overflow-y: auto;
+  border-right: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(15,6,0,0.6), transparent);
+  max-height: calc(100vh - 58px - 60px);
+  position: sticky;
+  top: 58px;
+}
+
+.sec { margin-bottom: 20px; }
+
+.stitle {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text3);
+  padding: 0 4px 8px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+
+/* SHOP BUTTONS */
+.sbtn {
+  width: 100%;
+  background: rgba(255, 150, 0, 0.04);
+  border: 1px solid rgba(255, 150, 0, 0.12);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s;
+  margin-bottom: 5px;
+  position: relative;
+  overflow: hidden;
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+}
+
+.sbtn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,180,0,0.06), transparent);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.sbtn:hover:not(.no) {
+  border-color: rgba(255, 180, 0, 0.35);
+  background: rgba(255, 160, 0, 0.09);
+  transform: translateX(2px);
+  box-shadow: -3px 0 12px rgba(255, 160, 0, 0.15), inset 1px 0 0 rgba(255,200,0,0.3);
+}
+
+.sbtn:hover:not(.no)::before { opacity: 1; }
+
+.sbtn.no {
+  opacity: 0.38;
+  cursor: not-allowed;
+  filter: grayscale(0.3);
+}
+
+.btop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3px;
+}
+
+.bname {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.blvl {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--amber);
+  background: rgba(255, 160, 0, 0.12);
+  padding: 2px 7px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,160,0,0.2);
+}
+
+.bcost {
+  font-size: 0.72rem;
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.bcv { font-weight: 800; }
+
+.bdesc {
+  font-size: 0.62rem;
+  color: var(--text3);
+  margin-top: 2px;
+}
+
+.bef {
+  font-size: 0.62rem;
+  color: var(--green);
+  font-weight: 700;
+  margin-top: 1px;
+}
+
+/* REFILL BUTTON */
+.refill-btn {
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(135deg, rgba(68,187,255,0.08), rgba(100,100,255,0.08));
+  border: 1px solid rgba(68,187,255,0.25);
+  border-radius: var(--radius-sm);
+  color: var(--blue);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 4px;
+}
+
+.refill-btn:hover {
+  background: linear-gradient(135deg, rgba(68,187,255,0.15), rgba(100,100,255,0.15));
+  border-color: rgba(68,187,255,0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(68,187,255,0.2);
+}
+
+/* ═══ RIGHT PANEL ═══ */
+#rside {
+  padding: 16px 12px;
+  overflow-y: auto;
+  border-left: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(15,6,0,0.6), transparent);
+  max-height: calc(100vh - 58px - 60px);
+  position: sticky;
+  top: 58px;
+}
+
+/* TABS */
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+  background: rgba(0,0,0,0.3);
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.tab {
+  flex: 1;
+  padding: 7px 4px;
+  border: none;
+  background: transparent;
+  color: var(--text3);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 7px;
+  transition: all 0.2s;
+}
+
+.tab:hover { color: var(--text2); background: rgba(255,180,0,0.06); }
+
+.tab.on {
+  background: linear-gradient(135deg, rgba(255,180,0,0.18), rgba(255,140,0,0.12));
+  color: var(--gold);
+  border: 1px solid rgba(255,180,0,0.25);
+}
+
+.tc { display: none; }
+.tc.on { display: block; }
+
+/* ═══ PRESTIGE ═══ */
+.prestige-box {
+  background: linear-gradient(135deg, rgba(50,0,100,0.3), rgba(100,0,50,0.2));
+  border: 1px solid rgba(180,80,255,0.3);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.prestige-box h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 0.9rem;
+  color: var(--purple);
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.prestige-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.pinfo {
+  background: rgba(180,80,255,0.07);
+  border: 1px solid rgba(180,80,255,0.15);
+  border-radius: 8px;
+  padding: 6px 8px;
+  text-align: center;
+}
+
+.pinfo-val {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--purple);
+  display: block;
+}
+
+.pinfo-lbl {
+  font-size: 0.6rem;
+  color: var(--text3);
+  display: block;
+}
+
+#presbtn {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, rgba(180,0,255,0.25), rgba(100,0,200,0.35));
+  border: 1px solid rgba(180,80,255,0.5);
+  border-radius: var(--radius-sm);
+  color: var(--purple);
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s;
+  letter-spacing: 0.05em;
+}
+
+#presbtn:not(:disabled):hover {
+  background: linear-gradient(135deg, rgba(180,0,255,0.4), rgba(100,0,200,0.5));
+  border-color: rgba(200,100,255,0.7);
+  box-shadow: 0 0 25px rgba(180,0,255,0.3);
+  transform: scale(1.02);
+}
+
+#presbtn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* ═══ CENTER ═══ */
+#center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 20px;
+  gap: 20px;
+  position: relative;
+}
+
+/* LEVEL BOX */
+#lvlbox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255,180,0,0.05);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  width: 100%;
+  max-width: 440px;
+  transition: all 0.3s;
+}
+
+#lvlbox:hover {
+  border-color: var(--border2);
+  background: rgba(255,180,0,0.08);
+}
+
+#lvlbadge {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--honey));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 1.1rem;
+  color: var(--brown);
+  flex-shrink: 0;
+  box-shadow: 0 0 15px rgba(255,200,0,0.3), inset 0 1px 0 rgba(255,255,200,0.4);
+}
+
+#lvltitle {
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: var(--gold);
+  display: block;
+}
+
+#lvlxp {
+  font-size: 0.67rem;
+  color: var(--text3);
+  display: block;
+  margin-top: 1px;
+}
+
+/* HIVE CLICK ZONE */
+#hiveBg {
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle at center,
+    rgba(255,180,0,0.08) 0%,
+    rgba(255,120,0,0.04) 40%,
+    transparent 70%);
+  border: 2px solid rgba(255,180,0,0.12);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  user-select: none;
+}
+
+#hiveBg::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,180,0,0.06);
+  animation: pulse-ring 3s ease-in-out infinite;
+}
+
+@keyframes pulse-ring {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.1; transform: scale(1.05); }
+}
+
+#hiveBg:hover {
+  border-color: rgba(255,200,0,0.35);
+  background: radial-gradient(circle at center,
+    rgba(255,180,0,0.14) 0%,
+    rgba(255,120,0,0.07) 40%,
+    transparent 70%);
+  box-shadow: 0 0 40px rgba(255,180,0,0.12);
+}
+
+#hiveBg:active {
+  transform: scale(0.95);
+}
+
+#bee {
+  font-size: 5rem;
+  filter: drop-shadow(0 0 20px rgba(255,200,0,0.5));
+  animation: fly 4s ease-in-out infinite;
+  display: block;
+  line-height: 1;
+  transition: filter 0.3s, transform 0.1s;
+  pointer-events: none;
+}
+
+@keyframes fly {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  25% { transform: translateY(-10px) rotate(3deg); }
+  50% { transform: translateY(-5px) rotate(-2deg); }
+  75% { transform: translateY(-13px) rotate(4deg); }
+}
+
+.ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid rgba(255,200,0,0.7);
+  animation: ring 0.7s ease-out forwards;
+  pointer-events: none;
+  top: 50%;
+  left: 50%;
+}
+
+@keyframes ring {
+  0% { width: 40px; height: 40px; opacity: 1; transform: translate(-50%,-50%) scale(0.3); }
+  100% { width: 200px; height: 200px; opacity: 0; transform: translate(-50%,-50%) scale(1); }
+}
+
+/* CLICK HINT */
+.click-hint {
+  font-size: 0.68rem;
+  color: var(--text3);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* BARS */
+.bars {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bw {
+  background: rgba(255,150,0,0.04);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  transition: all 0.2s;
+}
+
+.bw:hover {
+  border-color: var(--border2);
+  background: rgba(255,150,0,0.07);
+}
+
+.bh {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 7px;
+}
+
+.bn {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text2);
+}
+
+.bv {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--gold);
+}
+
+.br {
+  font-size: 0.65rem;
+  color: var(--green);
+  font-weight: 700;
+}
+
+.bt {
+  height: 7px;
+  background: rgba(0,0,0,0.4);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.bf {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+  position: relative;
+}
+
+.bf::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: rgba(255,255,255,0.15);
+  border-radius: 4px 4px 0 0;
+}
+
+.bf.en {
+  background: linear-gradient(90deg, #FFA500, #FFD700);
+  box-shadow: 0 0 8px rgba(255,180,0,0.5);
+}
+
+.bf.sh {
+  background: linear-gradient(90deg, #44BBFF, #8844FF);
+  box-shadow: 0 0 8px rgba(68,187,255,0.5);
+}
+
+.bf.xp {
+  background: linear-gradient(90deg, #BB44FF, #FF44BB);
+  box-shadow: 0 0 8px rgba(187,68,255,0.4);
+}
+
+/* MINI STATS */
+.mini-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  width: 100%;
+  max-width: 440px;
+}
+
+.mstat {
+  background: rgba(255,150,0,0.04);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 8px;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.mstat:hover {
+  border-color: var(--border2);
+  background: rgba(255,150,0,0.08);
+  transform: translateY(-1px);
+}
+
+.msico { font-size: 1.2rem; display: block; }
+
+.msv {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--gold);
+  display: block;
+  margin-top: 2px;
+}
+
+.msl {
+  font-size: 0.58rem;
+  color: var(--text3);
+  display: block;
+  margin-top: 1px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ═══ EVENTS LOG ═══ */
+#evlog {
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.ev {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  padding: 7px 9px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+  font-size: 0.72rem;
+  border-left: 2px solid transparent;
+  transition: all 0.2s;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.ev:hover { transform: translateX(2px); }
+
+.ev.bon {
+  background: rgba(77,255,110,0.06);
+  border-color: var(--green);
+}
+
+.ev.atk {
+  background: rgba(255,68,68,0.08);
+  border-color: var(--red);
+}
+
+.ev.inf {
+  background: rgba(68,187,255,0.06);
+  border-color: var(--blue);
+}
+
+.ev.spc {
+  background: rgba(187,68,255,0.08);
+  border-color: var(--purple);
+}
+
+.ei { font-size: 0.95rem; flex-shrink: 0; line-height: 1.3; }
+.et { flex: 1; color: var(--text); line-height: 1.4; }
+.eti { font-size: 0.6rem; color: var(--text3); white-space: nowrap; margin-top: 1px; }
+
+/* ═══ ACHIEVEMENTS ═══ */
+.ach {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  margin-bottom: 5px;
+  background: rgba(255,180,0,0.03);
+  border: 1px solid transparent;
+  transition: all 0.2s;
+}
+
+.ach.u {
+  border-color: rgba(255,200,0,0.25);
+  background: rgba(255,180,0,0.08);
+  box-shadow: 0 2px 10px rgba(255,180,0,0.05);
+}
+
+.ach.u:hover {
+  border-color: rgba(255,200,0,0.4);
+  transform: translateX(2px);
+}
+
+.ach.l {
+  opacity: 0.3;
+  filter: grayscale(1);
+}
+
+.ai { font-size: 1.3rem; }
+
+.an {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.ad {
+  font-size: 0.63rem;
+  color: var(--text3);
+  margin-top: 1px;
+}
+
+.abadge {
+  margin-left: auto;
+  background: var(--green);
+  color: #000;
+  font-size: 0.6rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 5px;
+  flex-shrink: 0;
+}
+
+/* ═══ STATS ═══ */
+.strow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  transition: background 0.15s;
+}
+
+.strow:hover { background: rgba(255,180,0,0.05); }
+
+.strow:not(:last-child) { border-bottom: 1px solid rgba(255,180,0,0.06); }
+
+.stl { color: var(--text3); }
+.stv { font-weight: 700; color: var(--text); }
+
+/* ═══ BEAR WARNING ═══ */
+#bearWarning {
+  display: none;
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, rgba(60,5,0,0.98), rgba(30,3,0,0.99));
+  border: 2px solid var(--red);
+  border-radius: var(--radius);
+  padding: 16px 28px;
+  text-align: center;
+  z-index: 500;
+  box-shadow: 0 0 40px rgba(255,50,0,0.35), 0 8px 32px rgba(0,0,0,0.5);
+  min-width: 240px;
+}
+
+#bearWarning.on {
+  display: block;
+  animation: bearShake 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes bearShake {
+  0% { transform: translateX(-50%) rotate(-1.5deg) scale(1); }
+  100% { transform: translateX(-50%) rotate(1.5deg) scale(1.04); }
+}
+
+#bearEmoji {
+  font-size: 3.2rem;
+  display: block;
+  animation: bearBounce 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes bearBounce {
+  0% { transform: translateY(0) rotate(-6deg); }
+  100% { transform: translateY(-10px) rotate(6deg); }
+}
+
+#bearText {
+  color: var(--red);
+  font-weight: 900;
+  font-size: 0.95rem;
+  margin-top: 8px;
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+#bearSub {
+  color: rgba(255,160,130,0.6);
+  font-size: 0.72rem;
+  margin-top: 4px;
+  display: block;
+}
+
+/* ═══ TOAST ═══ */
+#toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: linear-gradient(135deg, rgba(30,12,0,0.97), rgba(20,8,0,0.99));
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 12px 20px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--gold);
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  pointer-events: none;
+  z-index: 9999;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 20px rgba(255,180,0,0.1);
+  max-width: 280px;
+}
+
+#toast.on {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* ═══ OFFLINE MODAL ═══ */
+#offmod {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(8px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#offmod.hidden { display: none !important; }
+
+#offbox {
+  background: linear-gradient(135deg, rgba(25,10,0,0.99), rgba(15,6,0,0.99));
+  border: 2px solid var(--border2);
+  border-radius: var(--radius-lg);
+  padding: 36px;
+  text-align: center;
+  max-width: 380px;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.7), 0 0 40px rgba(255,180,0,0.1);
+  animation: modalIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.85) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+#offbox h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.4rem;
+  background: linear-gradient(135deg, var(--gold), var(--amber));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+}
+
+#offtxt {
+  font-size: 0.85rem;
+  color: var(--text2);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+#offbox button {
+  background: linear-gradient(135deg, var(--amber), var(--honey));
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 12px 32px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--brown);
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 20px rgba(255,160,0,0.3);
+}
+
+#offbox button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(255,160,0,0.45);
+}
+
+/* ═══ FLOATERS ═══ */
+.floater {
+  position: fixed;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--gold);
+  text-shadow: 0 0 10px rgba(255,200,0,0.6);
+  pointer-events: none;
+  animation: floatUp 1s ease-out forwards;
+  z-index: 9998;
+  white-space: nowrap;
+}
+
+@keyframes floatUp {
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  50% { opacity: 1; transform: translateY(-30px) scale(1.1); }
+  100% { opacity: 0; transform: translateY(-70px) scale(0.8); }
+}
+
+/* ═══ FLYING BEES ═══ */
+.fb {
+  position: fixed;
+  font-size: 1.3rem;
+  pointer-events: none;
+  z-index: 9990;
+  animation: fbFly var(--dur,3s) ease-in-out forwards;
+  filter: drop-shadow(0 0 6px rgba(255,200,0,0.4));
+}
+
+@keyframes fbFly {
+  0% { opacity: 0; transform: translate(0,0) rotate(0deg) scale(0); }
+  20% { opacity: 1; transform: translate(calc(var(--tx)*0.2), calc(var(--ty)*0.2)) rotate(calc(var(--tr)*0.2)) scale(1); }
+  80% { opacity: 1; transform: translate(calc(var(--tx)*0.8), calc(var(--ty)*0.8)) rotate(calc(var(--tr)*0.8)) scale(1); }
+  100% { opacity: 0; transform: translate(var(--tx), var(--ty)) rotate(var(--tr)) scale(0); }
+}
+
+/* SECTION TITLE FOR RIGHT PANEL */
+.rtitle {
+  font-family: 'Cinzel', serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* EMPTY LOG */
+.empty-log {
+  text-align: center;
+  padding: 24px;
+  color: var(--text3);
+  font-size: 0.75rem;
+}
+
+/* GLOW EFFECT for honey count */
+.honey-glow {
+  animation: honeyPulse 0.3s ease-out;
+}
+
+@keyframes honeyPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); color: var(--gold); }
+  100% { transform: scale(1); }
+}
+
+/* RESPONSIVE */
+@media (max-width: 1100px) {
+  #app { grid-template-columns: 240px 1fr 240px; }
+}
+
+@media (max-width: 900px) {
+  #app { grid-template-columns: 1fr; grid-template-rows: auto; }
+  #hdr { grid-column: 1; }
+  #shop, #rside {
+    max-height: none;
+    position: static;
+    border: none;
+    border-top: 1px solid var(--border);
+  }
+  #center { order: -1; }
+  .mini-stats { grid-template-columns: repeat(3,1fr); }
+  #bearWarning { bottom: 12px; }
+}
+
+/* ═══ HEX DECORATION ═══ */
+.hex-deco {
+  position: fixed;
+  opacity: 0.02;
+  font-size: 120px;
+  color: var(--gold);
+  pointer-events: none;
+  z-index: 0;
+  user-select: none;
+}
+
+.hex-deco:nth-child(1) { top: 10%; right: 5%; animation: hexFloat 8s ease-in-out infinite; }
+.hex-deco:nth-child(2) { bottom: 20%; left: 3%; animation: hexFloat 10s ease-in-out infinite reverse; }
+
+@keyframes hexFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(15deg); }
+}
+</style>
+</head>
+<body>
+
+<!-- Déco hexagones en fond -->
+<div class="hex-deco">⬡</div>
+<div class="hex-deco">⬡</div>
+
+<!-- TOP TABS -->
+<div id="topTabs">
+  <div class="tablink active" onclick="goPage('index.htlm')">🐝 hive</div>
+  <div class="tablink" onclick="goPage('shop.php')">🛒 Shop</div>
+  <div class="tablink" onclick="goPage('world.php')">🌍 world</div>
+  <div class="tablink" onclick="goPage('pvp.php')">⚔️ PvP</div>
+  <div class="tablink" onclick="goPage('settings.php')">⚙️ Options</div>
+</div>
+
+<div id="app">
+
+  <!-- ═══ HEADER ═══ -->
+  <div id="hdr">
+    <h1>🐝🐝 Hive Clicker 🐝🐝</h1>
+    <div class="hstats">
+      <div class="hstat">
+        <span class="hstat-ico">🍯</span>
+        <div><span class="hsv" id="hhoney">0</span><span class="hsl">Honey</span></div>
+      </div>
+      <div class="hstat">
+        <span class="hstat-ico">📈</span>
+        <div><span class="hsv" id="hhps">0</span><span class="hsl">per sec</span></div>
+      </div>
+      <div class="hstat">
+        <span class="hstat-ico">🏆</span>
+        <div><span class="hsv" id="hhtotal">0</span><span class="hsl">total</span></div>
+      </div>
+      <div class="hstat">
+        <span class="hstat-ico">✨</span>
+        <div><span class="hsv" id="hpres">×1.0</span><span class="hsl">prestige</span></div>
+      </div>
+    </div>
+    <div class="hbtns">
+      <button class="hbtn" onclick="doRest()">😴 Rest +25⚡</button>
+      <button class="hbtn" onclick="saveGame()">💾 Save</button>
+      <button class="hbtn" onclick="exportSave()">📤 Export</button>
+      <button class="hbtn" onclick="document.getElementById('fileLoader').click()">📥 Import</button>
+      <button class="hbtn" onclick="hardReset()">🗑️ Reset</button>
+      <input type="file" id="fileLoader" style="display:none" onchange="loadFile(event)">
+    </div>
+  </div>
+
+  <!-- ═══ LEFT — SHOP ═══ -->
+  <aside id="shop">
+
+    <div class="sec">
+      <div class="stitle">⚡ Improvements</div>
+
+      <button class="sbtn" id="sb0" onclick="buy('click')">
+        <div class="btop"><div class="bname">👆 Click power</div><div class="blvl" id="lv0">Niv.1</div></div>
+        <div class="bcost">🍯 <span class="bcv" id="cs0">10</span></div>
+        <div class="bdesc">+1 Honey pe clic</div>
+        <div class="bef" id="ef0"></div>
+      </button>
+
+      <button class="sbtn" id="sb1" onclick="buy('energy')">
+        <div class="btop"><div class="bname">🔋 Max energy</div><div class="blvl" id="lv1">Niv.1</div></div>
+        <div class="bcost">🍯 <span class="bcv" id="cs1">30</span></div>
+        <div class="bdesc">+20 Max energy</div>
+      </button>
+
+      <button class="sbtn" id="sb2" onclick="buy('regen')">
+        <div class="btop"><div class="bname">♻️ Regeneration</div><div class="blvl" id="lv2">Niv.1</div></div>
+        <div class="bcost">🍯 <span class="bcv" id="cs2">45</span></div>
+        <div class="bdesc">+0.1 Backup successfully imported/s</div>
+        <div class="bef" id="ef2"></div>
+      </button>
+    </div>
+
+    <div class="sec">
+      <div class="stitle">🐝 Production</div>
+
+      <button class="sbtn" id="sb3" onclick="buy('bee')">
+        <div class="btop"><div class="bname">🐝 BEE</div><div class="blvl" id="lv3">×0</div></div>
+        <div class="bcost">🍯 <span class="bcv" id="cs3">20</span></div>
+        <div class="bdesc">+0.5 Honey/s</div>
+      </button>
+
+      <button class="sbtn" id="sb4" onclick="buy('hive')">
+        <div class="btop"><div class="bname">🏠 Hive</div><div class="blvl" id="lv4">×0</div></div>
+        <div class="bcost">🍯 <span class="bcv" id="cs4">50</span></div>
+        <div class="bdesc">+2 Honey/s</div>
+      </button>
+
+      <button class="sbtn" id="sb5" onclick="buy('queen')">
+        <div class="btop"><div class="bname">👑 Queen</div><div class="blvl" id="lv5">×0</div></div>
+        <div class="bcost">🍯 <span class="bcv" id="cs5">200</span></div>
+        <div class="bdesc">+10 Honey/s +3 abeilles</div>
+      </button>
+
+      <button class="sbtn" id="sb6" onclick="buy('flower')">
+        <div class="btop"><div class="bname">🌸 Flower garden</div><div class="blvl" id="lv6">×0</div></div>
+        <div class="bcost">🍯 <span class="bcv" id="cs6">500</span></div>
+        <div class="bdesc">×1.2 global production</div>
+      </button>
+
+      <button class="sbtn" id="sb7" onclick="buy('apiary')">
+        <div class="btop"><div class="bname">🏰 Royal apiary</div><div class="blvl" id="lv7">×0</div></div>
+        <div class="bcost">🍯 <span class="bcv" id="cs7">2000</span></div>
+        <div class="bdesc">+20 Honey/s + ×1.3 global</div>
+      </button>
+    </div>
+
+    <div class="sec">
+      <div class="stitle">🛡️ Defense</div>
+
+      <button class="sbtn" id="sb8" onclick="buy('shield')">
+        <div class="btop"><div class="bname">🛡️ Shield</div><div class="blvl" id="lv8">0/0</div></div>
+        <div class="bcost">🍯 <span class="bcv" id="cs8">40</span></div>
+        <div class="bdesc">+30 points Shield</div>
+      </button>
+
+      <button class="sbtn" id="sb9" onclick="buy('armor')">
+        <div class="btop"><div class="bname">⚔️ Armor</div><div class="blvl" id="lv9">Niv.0</div></div>
+        <div class="bcost">🍯 <span class="bcv" id="cs9">80</span></div>
+        <div class="bdesc">−10% damage received</div>
+      </button>
+
+      <button class="sbtn" id="sb10" onclick="buy('guardian')">
+        <div class="btop"><div class="bname">💂 Guardian</div><div class="blvl" id="lv10x">×0</div></div>
+        <div class="bcost">🍯 <span class="bcv" id="cs10">350</span></div>
+        <div class="bdesc">+15 shield/s</div>
+      </button>
+
+      <button class="refill-btn" onclick="refillShield()">
+        💎 Recharge shield — <span id="cRefill">25</span> 🍯
+      </button>
+    </div>
+
+    <!-- PRESTIGE DANS LE SHOP -->
+    <div class="prestige-box">
+      <h3>✨ PRESTIGE</h3>
+      <div class="prestige-info">
+        <div class="pinfo">
+          <span class="pinfo-val" id="presCount">0</span>
+          <span class="pinfo-lbl">Prestiges</span>
+        </div>
+        <div class="pinfo">
+          <span class="pinfo-val" id="presMulti">×1.0</span>
+          <span class="pinfo-lbl">Multiplier</span>
+        </div>
+      </div>
+      <button id="presbtn" onclick="doPrestige()" disabled>✨ PRESTIGE — 5 000 🍯</button>
+      <p style="font-size:.63rem;color:var(--text3);margin-top:8px;text-align:center;line-height:1.5;">
+        Resets everything · Permanent bonus ×1.5
+      </p>
+    </div>
+
+  </aside>
+
+  <!-- ═══ CENTER ═══ -->
+  <main id="center">
+
+    <!-- LEVEL -->
+    <div id="lvlbox">
+      <div id="lvlbadge">1</div>
+      <div style="flex:1">
+        <span id="lvltitle">Novice</span>
+        <span id="lvlxp">XP : 0 / 100</span>
+      </div>
+      <div style="flex:2;margin-left:12px;">
+        <div class="bt"><div class="bf xp" id="xpbar" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <!-- HIVE -->
+    <div id="hiveBg" onclick="clickBee(event)">
+      <span id="bee">🐝</span>
+    </div>
+    <div class="click-hint">Click to harvest!</div>
+
+    <!-- BARS -->
+    <div class="bars">
+      <div class="bw">
+        <div class="bh">
+          <span class="bn">⚡ Energy</span>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span class="br" id="erate"></span>
+            <span class="bv" id="eval">100/100</span>
+          </div>
+        </div>
+        <div class="bt"><div class="bf en" id="ebar" style="width:100%"></div></div>
+      </div>
+
+      <div class="bw">
+        <div class="bh">
+          <span class="bn">🛡️ Shield</span>
+          <span class="bv" id="sval">0/0</span>
+        </div>
+        <div class="bt"><div class="bf sh" id="sbar" style="width:0%"></div></div>
+      </div>
+
+      <div class="bw">
+        <div class="bh">
+          <span class="bn">⭐ Exp</span>
+          <span class="bv" id="xpval">0</span>
+        </div>
+        <div class="bt"><div class="bf xp" id="xpbar2" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <!-- MINI STATS -->
+    <div class="mini-stats">
+      <div class="mstat">
+        <span class="msico">👆</span>
+        <span class="msv" id="smcp">1</span>
+        <span class="msl">Honey/clic</span>
+      </div>
+      <div class="mstat">
+        <span class="msico">📈</span>
+        <span class="msv" id="smhps">0</span>
+        <span class="msl">Honey/sec</span>
+      </div>
+      <div class="mstat">
+        <span class="msico">🐝</span>
+        <span class="msv" id="smb">1</span>
+        <span class="msl">BEE</span>
+      </div>
+      <div class="mstat">
+        <span class="msico">🏠</span>
+        <span class="msv" id="smh">0</span>
+        <span class="msl">HIVE</span>
+      </div>
+      <div class="mstat">
+        <span class="msico">👑</span>
+        <span class="msv" id="smq">0</span>
+        <span class="msl">Queen</span>
+      </div>
+      <div class="mstat">
+        <span class="msico">✨</span>
+        <span class="msv" id="smm">×1.00</span>
+        <span class="msl">multi</span>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ═══ RIGHT PANEL ═══ -->
+  <aside id="rside">
+
+    <div class="tabs">
+      <button class="tab on"  onclick="goTab('ev',this)">📜 Newspaper</button>
+      <button class="tab"     onclick="goTab('ac',this)">🏆 Success</button>
+      <button class="tab"     onclick="goTab('st',this)">📊 Stats</button>
+    </div>
+
+    <!-- EVENTS -->
+    <div class="tc on" id="tc-ev">
+      <div class="rtitle">📜 Event log</div>
+      <div id="evlog"><div class="empty-log">No events at the moment…</div></div>
+    </div>
+
+    <!-- ACHIEVEMENTS -->
+    <div class="tc" id="tc-ac">
+      <div class="rtitle">🏆 Success</div>
+      <div id="achlist"></div>
+    </div>
+
+    <!-- STATS -->
+    <div class="tc" id="tc-st">
+      <div class="rtitle">📊 Statistiques</div>
+      <div id="statsbox"></div>
+    </div>
+
+  </aside>
+
+</div><!-- /app -->
+
+<!-- BEAR WARNING -->
+<div id="bearWarning">
+  <span id="bearEmoji">🐻</span>
+  <span id="bearText">⚠️ The bear is attacking!</span>
+  <span id="bearSub">Production -50% · Recharge the shield!</span>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- OFFLINE MODAL -->
+<div id="offmod" class="hidden">
+  <div id="offbox">
+    <h2>🐝 Welcome back!</h2>
+    <p id="offtxt"></p>
+    <button onclick="closeOff()">✨ To recover !</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════
+var G = {
+  honey:0, totalHoney:0,
+  energy:100, maxEnergy:100,
+  shield:0, maxShield:0,
+  xp:0, level:1,
+  prestige:0, presMult:1,
+  clickPow:1, clickLvl:1,
+  bees:1, hives:0, queens:0, flowers:0, apiaries:0, guardians:0,
+  regenLvl:1, energyLvl:1, armorLvl:0,
+  c:{click:10,energy:30,regen:45,bee:20,hive:50,queen:200,flower:500,apiary:2000,shield:40,armor:80,guardian:350},
+  totalClicks:0, totalRests:0, blocked:0, taken:0, evCount:0,
+  startTime:Date.now(), lastSave:Date.now(),
+  refillCount:0,
+  bearWasActive:false
+};
+
+var XP  = [0,100,250,500,1000,2000,4000,8000,15000,30000,60000];
+var LVN = ['Novice','Beekeeper Apprentice','Junior Beekeeper','Beekeeper',
+           'Expert Beekeeper','Master Beekeeper','Hive Guardian',
+           'Honey Archivist','Bee Legend','Pollen God','∞ Ascendant'];
+
+
+var unlocked = {};
+
+// ═══════════════════════════════════════
+//  ACHIEVEMENTS
+// ═══════════════════════════════════════
+var ACHS = [
+  {id:'h100',  ico:'🍯', n:'First Harvest',        d:'Collect 100 total honey',        ok:function(){return G.totalHoney>=100;}},
+  {id:'h1k',   ico:'🏺', n:'Honey Jar',            d:'1,000 total honey',              ok:function(){return G.totalHoney>=1000;}},
+  {id:'h10k',  ico:'🥇', n:'Beekeeper',            d:'10,000 total honey',             ok:function(){return G.totalHoney>=10000;}},
+  {id:'h100k', ico:'💎', n:'Honey Baron',          d:'100,000 total honey',            ok:function(){return G.totalHoney>=100000;}},
+  {id:'c100',  ico:'👆', n:'Clicker',              d:'100 clicks',                     ok:function(){return G.totalClicks>=100;}},
+  {id:'c1k',   ico:'🖱️',n:'Frenzied Clicker',     d:'1,000 clicks',                   ok:function(){return G.totalClicks>=1000;}},
+  {id:'c10k',  ico:'⚡', n:'Click Maestro',        d:'10,000 clicks',                  ok:function(){return G.totalClicks>=10000;}},
+  {id:'b5',    ico:'🐝', n:'Small Swarm',          d:'5 bees',                         ok:function(){return G.bees>=5;}},
+  {id:'b20',   ico:'🌊', n:'Massive Swarm',        d:'20 bees',                        ok:function(){return G.bees>=20;}},
+  {id:'b50',   ico:'🌪️',n:'Bee Tornado',          d:'50 bees',                        ok:function(){return G.bees>=50;}},
+  {id:'q1',    ico:'👑', n:'First Queen',          d:'1 queen',                        ok:function(){return G.queens>=1;}},
+  {id:'q3',    ico:'🌟', n:'Royal Court',          d:'3 queens',                       ok:function(){return G.queens>=3;}},
+  {id:'f1',    ico:'🌸', n:'Gardener',             d:'1 flower garden',                ok:function(){return G.flowers>=1;}},
+  {id:'ap1',   ico:'🏰', n:'Apiary Lord',          d:'1 royal apiary',                 ok:function(){return G.apiaries>=1;}},
+  {id:'sh1',   ico:'🛡️',n:'Protector',            d:'Block one attack',               ok:function(){return G.blocked>=1;}},
+  {id:'sh10',  ico:'🏯', n:'Fortress',             d:'10 blocked attacks',             ok:function(){return G.blocked>=10;}},
+  {id:'pr1',   ico:'✨', n:'Reborn',               d:'1st prestige',                   ok:function(){return G.prestige>=1;}},
+  {id:'pr3',   ico:'💫', n:'Ascended',             d:'3 prestiges',                    ok:function(){return G.prestige>=3;}},
+  {id:'lv5',   ico:'⭐', n:'Rank Up',              d:'Level 5',                        ok:function(){return G.level>=5;}},
+  {id:'lv10',  ico:'🌠', n:'Expert',               d:'Level 10',                       ok:function(){return G.level>=10;}},
+  {id:'sv10',  ico:'💀', n:'Survivor',             d:'10 attacks endured',             ok:function(){return G.taken>=10;}},
+];
+
+
+function chkAchs(){
+  ACHS.forEach(function(a){
+    if(!unlocked[a.id] && a.ok()){
+      unlocked[a.id] = true;
+      toast('🏆 Achievement  : ' + a.n + ' !');
+      addEv('spc', a.ico, 'Suc : <b>' + a.n + '</b>');
+    }
+  });
+}
+
+// ═══════════════════════════════════════
+//  FORMATTAGE
+// ═══════════════════════════════════════
+function fmt(n){
+  n = Math.floor(n);
+  if(n >= 1e9) return (n/1e9).toFixed(2) + 'B';
+  if(n >= 1e6) return (n/1e6).toFixed(2) + 'M';
+  if(n >= 1e3) return (n/1e3).toFixed(1) + 'k';
+  return n.toString();
+}
+
+function fmtTime(s){
+  if(s < 60) return Math.floor(s) + 's';
+  if(s < 3600) return Math.floor(s/60) + 'm ' + Math.floor(s%60) + 's';
+  return Math.floor(s/3600) + 'h ' + Math.floor((s%3600)/60) + 'm';
+}
+
+// ═══════════════════════════════════════
+//  CALCULS
+// ═══════════════════════════════════════
+function getMulti(){
+  return Math.pow(1.2, G.flowers) * Math.pow(1.3, G.apiaries) * G.presMult;
+}
+
+function getHPS(){
+  var base = G.bees * 0.5 + G.hives * 2 + G.queens * 10 + G.apiaries * 20;
+  var multi = getMulti();
+  var bearPenalty = (G.shield <= 0 && G.maxShield > 0) ? 0.5 : 1;
+  return base * multi * bearPenalty;
+}
+
+function getRegen(){
+  return G.regenLvl * 0.1;
+}
+
+function getArmor(){
+  return Math.min(0.8, G.armorLvl * 0.1);
+}
+
+function getShieldRegen(){
+  return G.guardians * 0.5;
+}
+
+// ═══════════════════════════════════════
+//  XP & LEVELS
+// ═══════════════════════════════════════
+function addXP(amount){
+  G.xp += amount;
+  var maxLvl = XP.length;
+  while(G.level < maxLvl && G.xp >= XP[Math.min(G.level, XP.length-1)]){
+    G.xp -= XP[Math.min(G.level, XP.length-1)];
+    G.level++;
+    toast('⭐ level' + G.level + ' — ' + LVN[Math.min(G.level-1, LVN.length-1)] + ' !');
+    addEv('spc', '⭐', 'level' + G.level + ' atteint ! <b>' + LVN[Math.min(G.level-1, LVN.length-1)] + '</b>');
+    spawnFB();
+    chkAchs();
+  }
+}
+
+// ═══════════════════════════════════════
+//  EVENTS LOG
+// ═══════════════════════════════════════
+var evs = [];
+
+function addEv(type, ico, txt){
+  var now = new Date();
+  var h = now.getHours().toString().padStart(2,'0');
+  var m = now.getMinutes().toString().padStart(2,'0');
+  var s = now.getSeconds().toString().padStart(2,'0');
+  evs.unshift({type:type, ico:ico, txt:txt, time:h+':'+m+':'+s});
+  if(evs.length > 60) evs.pop();
+  renderLog();
+}
+
+function renderLog(){
+  var el = document.getElementById('evlog');
+  if(!el) return;
+  if(evs.length === 0){
+    el.innerHTML = '<div class="empty-log">No events yet…</div>';
+    return;
+  }
+  el.innerHTML = evs.map(function(e){
+    return '<div class="ev '+e.type+'">' +
+      '<span class="ei">'+e.ico+'</span>' +
+      '<div style="flex:1"><div class="et">'+e.txt+'</div>' +
+      '<div class="eti">'+e.time+'</div></div>' +
+      '</div>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════
+//  CLICK
+// ═══════════════════════════════════════
+function clickBee(evt){
+  if(G.energy <= 1){ toast('⚡ No more energy! Rest.'); return; }
+  var gain = G.clickPow * G.presMult;
+  G.honey += gain;
+  G.totalHoney += gain;
+  G.totalClicks++;
+  G.energy = Math.max(0, G.energy - 1);
+  addXP(1);
+  chkAchs();
+
+  // Floater
+  var rect = document.getElementById('hiveBg').getBoundingClientRect();
+  var x = evt ? evt.clientX : rect.left + rect.width/2;
+  var y = evt ? evt.clientY : rect.top + rect.height/2;
+  spawnFloat('+' + Math.floor(gain) + ' 🍯', x, y);
+
+  // Ring effect
+  var ring = document.createElement('div');
+  ring.className = 'ring';
+  document.getElementById('hiveBg').appendChild(ring);
+  setTimeout(function(){ ring.remove(); }, 700);
+
+  // Bee bounce
+  var bee = document.getElementById('bee');
+  bee.style.transform = 'scale(0.85)';
+  setTimeout(function(){ bee.style.transform = ''; }, 100);
+
+  updateUI();
+}
+
+// ═══════════════════════════════════════
+//  SHOP
+// ═══════════════════════════════════════
+function doRest(){
+  G.energy = Math.min(G.maxEnergy, G.energy + 25);
+  G.totalRests++;
+  addEv('inf', '😴', 'Rest: +25 ⚡ energy');
+  updateUI();
+}
+
+function refillShield(){
+  var cost = Math.floor(25 + G.maxShield * 0.5 + (G.refillCount||0) * 15);
+  if(G.honey < cost){ toast('🍯 Not enough honey!'); return; }
+  if(G.maxShield <= 0){ toast('🛡️ Buy a shield first!'); return; }
+  G.honey -= cost;
+  G.shield = G.maxShield;
+  G.refillCount = (G.refillCount||0) + 1;
+  addEv('inf', '🛡️', 'Shield refilled to ' + G.maxShield + '!');
+  updateUI();
+}
+
+function buy(type){
+  var c = G.c[type];
+  if(G.honey < c){ toast('🍯 Not enough honey!'); return; }
+  G.honey -= c;
+  switch(type){
+    case 'click':
+      G.clickPow++;
+      G.clickLvl++;
+      G.c.click = Math.floor(c * 1.6);
+      addEv('inf', '👆', 'Click power → ' + G.clickPow + ' honey/click');
+      break;
+    case 'energy':
+      G.maxEnergy += 20;
+      G.energyLvl++;
+      G.c.energy = Math.floor(c * 1.5);
+      addEv('inf', '🔋', 'Max energy → ' + G.maxEnergy);
+      break;
+    case 'regen':
+      G.regenLvl++;
+      G.c.regen = Math.floor(c * 1.6);
+      addEv('inf', '♻️', 'Regen Lv.' + G.regenLvl + ' → ' + getRegen().toFixed(1) + '/s');
+      break;
+    case 'bee':
+      G.bees++;
+      G.c.bee = Math.floor(c * 1.7);
+      spawnFB();
+      addEv('inf', '🐝', 'New bee! Total: ' + G.bees);
+      break;
+    case 'hive':
+      G.hives++;
+      G.c.hive = Math.floor(c * 1.8);
+      addEv('bon', '🏠', 'Hive built! Total: ' + G.hives);
+      break;
+    case 'queen':
+      G.queens++;
+      G.bees += 3;
+      G.c.queen = Math.floor(c * 2.0);
+      addEv('spc', '👑', 'Queen purchased! Queens: ' + G.queens + ', +3 bees');
+      break;
+    case 'flower':
+      G.flowers++;
+      G.c.flower = Math.floor(c * 2.2);
+      addEv('bon', '🌸', 'Garden planted! Multiplier → ×' + getMulti().toFixed(2));
+      break;
+    case 'apiary':
+      G.apiaries++;
+      G.c.apiary = Math.floor(c * 2.5);
+      addEv('spc', '🏰', 'Royal apiary! Total: ' + G.apiaries);
+      break;
+    case 'shield':
+      G.maxShield += 30;
+      G.shield = Math.min(G.shield + 30, G.maxShield);
+      G.c.shield = Math.floor(c * 1.7);
+      addEv('inf', '🛡️', 'Max shield → ' + G.maxShield);
+      break;
+    case 'armor':
+      G.armorLvl++;
+      G.c.armor = Math.floor(c * 1.8);
+      addEv('inf', '⚔️', 'Armor Lv.' + G.armorLvl + ' (−' + Math.floor(getArmor()*100) + '% damage)');
+      break;
+    case 'guardian':
+      G.guardians++;
+      G.maxShield += 50;
+      G.c.guardian = Math.floor(c * 2.0);
+      addEv('spc', '💂', 'Guardian summoned! Max shield → ' + G.maxShield);
+      break;
+  }
+  chkAchs();
+  updateUI();
+}
+
+
+// ═══════════════════════════════════════
+//  PRESTIGE
+// ═══════════════════════════════════════
+function doPrestige(){
+  if(G.honey < 5000) return;
+  if(!confirm('✨ Prestige — Everything will be reset. You gain a permanent bonus of 1.5x. Confirm?')) return;
+
+  G.prestige++;
+  G.presMult = Math.pow(1.5, G.prestige);
+
+  // Reset sauf prestige/multi/total/niveau
+  var keepPrestige = G.prestige;
+  var keepMult     = G.presMult;
+  var keepTotal    = G.totalHoney;
+  var keepLevel    = G.level;
+  var keepXP       = G.xp;
+  var keepClicks   = G.totalClicks;
+  var keepRests    = G.totalRests;
+  var keepBlocked  = G.blocked;
+  var keepTaken    = G.taken;
+  var keepEvCount  = G.evCount;
+  var keepStart    = G.startTime;
+
+  G = {
+    honey:0, totalHoney:keepTotal,
+    energy:100, maxEnergy:100,
+    shield:0, maxShield:0,
+    xp:keepXP, level:keepLevel,
+    prestige:keepPrestige, presMult:keepMult,
+    clickPow:1, clickLvl:1,
+    bees:1, hives:0, queens:0, flowers:0, apiaries:0, guardians:0,
+    regenLvl:1, energyLvl:1, armorLvl:0,
+    c:{click:10,energy:30,regen:45,bee:20,hive:50,queen:200,flower:500,apiary:2000,shield:40,armor:80,guardian:350},
+    totalClicks:keepClicks, totalRests:keepRests,
+    blocked:keepBlocked, taken:keepTaken, evCount:keepEvCount,
+    startTime:keepStart, lastSave:Date.now(),
+    refillCount:0,
+    bearWasActive:false
+  };
+
+  addEv('spc', '✨', 'PRESTIGE ' + G.prestige + ' ! Multipl → ×' + G.presMult.toFixed(1));
+  toast('✨ Prestige ' + G.prestige + ' ! Bonus ×' + G.presMult.toFixed(1) + ' actif !');
+  spawnFB(); spawnFB(); spawnFB();
+  chkAchs();
+  updateUI();
+  renderAchs();
+}
+
+// ═══════════════════════════════════════
+//  RANDOM EVENTS
+// ═══════════════════════════════════════
+var EVPOOL = [
+  {w:25, fn:function(){
+    var g = Math.floor(10 + Math.random()*30);
+    G.honey += g; G.totalHoney += g;
+    addEv('bon', '🌼', 'Spring bloom! +' + g + ' honey');
+    G.evCount++;
+  }},
+  {w:20, fn:function(){
+    var g = Math.floor(3 + Math.random()*8);
+    G.bees += g;
+    addEv('bon', '🐝', 'A wild swarm joins the hive! +' + g + ' bees');
+    G.evCount++; spawnFB(); chkAchs();
+  }},
+  {w:15, fn:function(){
+    G.energy = Math.min(G.maxEnergy, G.energy + 30);
+    addEv('bon', '☀️', 'Warm sunlight! +30 ⚡ energy');
+    G.evCount++;
+  }},
+  {w:10, fn:function(){
+    var g = Math.floor(getHPS() * 5);
+    G.honey += g; G.totalHoney += g;
+    addEv('spc', '🍀', 'Magic clover! +' + g + ' honey (5s production)');
+    G.evCount++;
+  }},
+  {w:20, fn:function(){
+    var dmg = Math.floor((15 + Math.random()*20) * (1 - getArmor()));
+    if(G.shield > 0){
+      var bl = Math.min(G.shield, dmg);
+      G.shield = Math.max(0, G.shield - dmg);
+      G.blocked++;
+      addEv('inf', '🛡️', 'Bear attack blocked! (' + Math.floor(bl) + ' damage absorbed)');
+    } else {
+      G.energy = Math.max(0, G.energy - dmg);
+      G.taken++;
+      addEv('atk', '🐻', 'Bear attack! −' + dmg + ' energy');
+    }
+    G.evCount++; chkAchs();
+  }},
+  {w:10, fn:function(){
+    var b = Math.floor(20 + Math.random()*30);
+    G.shield = Math.min(G.maxShield, G.shield + b);
+    addEv('bon', '💠', 'Protection crystal! +' + b + ' shield');
+    G.evCount++;
+  }},
+];
+
+function triggerEv(){
+  var tot = 0;
+  EVPOOL.forEach(function(e){ tot += e.w; });
+  var r = Math.random() * tot;
+  for(var i = 0; i < EVPOOL.length; i++){
+    r -= EVPOOL[i].w;
+    if(r <= 0){ EVPOOL[i].fn(); return; }
+  }
+}
+
+
+// ═══════════════════════════════════════
+//  GAME LOOP
+// ═══════════════════════════════════════
+var tickCount = 0;
+setInterval(function(){
+  tickCount++;
+
+  // Production de miel
+  var hps = getHPS();
+  if(hps > 0){
+    G.honey += hps;
+    G.totalHoney += hps;
+    addXP(hps * 0.1);
+  }
+
+  // Régénération energy
+  G.energy = Math.min(G.maxEnergy, G.energy + getRegen());
+
+  // Régénération bouclier (gardiens)
+  if(G.guardians > 0 && G.maxShield > 0){
+    G.shield = Math.min(G.maxShield, G.shield + getShieldRegen());
+  }
+
+  // Événement aléatoire toutes les ~20s
+  if(tickCount % 20 === 0) triggerEv();
+
+  // Autosave toutes les 30s
+  if(tickCount % 30 === 0) saveGame();
+
+  chkAchs();
+  updateUI();
+}, 1000);
+
+// ═══════════════════════════════════════
+//  UI UPDATE
+// ═══════════════════════════════════════
+function updateUI(){
+  var hps   = getHPS();
+  var multi = getMulti();
+  var xnxt  = XP[Math.min(G.level, XP.length-1)];
+  var xpct  = xnxt > 0 ? Math.min(100, G.xp / xnxt * 100) : 100;
+  var epct  = G.maxEnergy > 0 ? G.energy / G.maxEnergy * 100 : 0;
+  var spct  = G.maxShield > 0 ? G.shield / G.maxShield * 100 : 0;
+
+  // Header
+  document.getElementById('hhoney').textContent  = fmt(G.honey);
+  document.getElementById('hhps').textContent    = hps.toFixed(1);
+  document.getElementById('hhtotal').textContent = fmt(G.totalHoney);
+  document.getElementById('hpres').textContent   = '×' + G.presMult.toFixed(1);
+
+  // Bars
+  document.getElementById('ebar').style.width  = epct + '%';
+  document.getElementById('sbar').style.width  = spct + '%';
+  document.getElementById('xpbar').style.width = xpct + '%';
+  document.getElementById('xpbar2').style.width= xpct + '%';
+  document.getElementById('eval').textContent  = Math.floor(G.energy) + '/' + G.maxEnergy;
+  document.getElementById('sval').textContent  = Math.floor(G.shield) + '/' + G.maxShield;
+  document.getElementById('xpval').textContent = fmt(G.xp);
+  document.getElementById('erate').textContent = '+' + getRegen().toFixed(1) + '/s';
+
+  // Level
+  document.getElementById('lvlbadge').textContent = G.level;
+  document.getElementById('lvltitle').textContent  = LVN[Math.min(G.level-1, LVN.length-1)];
+  document.getElementById('lvlxp').textContent     = 'XP : ' + fmt(G.xp) + ' / ' + fmt(xnxt);
+
+  // Mini stats
+  document.getElementById('smcp').textContent  = G.clickPow;
+  document.getElementById('smhps').textContent = hps.toFixed(1);
+  document.getElementById('smb').textContent   = G.bees;
+  document.getElementById('smh').textContent   = G.hives;
+  document.getElementById('smq').textContent   = G.queens;
+  document.getElementById('smm').textContent   = '×' + multi.toFixed(2);
+
+  // Prestige box
+  document.getElementById('presCount').textContent = G.prestige;
+  document.getElementById('presMulti').textContent  = '×' + G.presMult.toFixed(1);
+
+  // Refill cost
+  var refillCost = Math.floor(25 + G.maxShield * 0.5 + (G.refillCount||0) * 15);
+  document.getElementById('cRefill').textContent = fmt(refillCost);
+
+  // Shop buttons
+  var items = [
+    {id:'sb0',  cost:G.c.click,    lv:'lv0',   cs:'cs0', lvtxt:'Niv.'+G.clickLvl,
+     eftxt:'→ '+(G.clickPow+1)+' miel/clic', ef:'ef0'},
+    {id:'sb1',  cost:G.c.energy,   lv:'lv1',   cs:'cs1', lvtxt:'Niv.'+G.energyLvl},
+    {id:'sb2',  cost:G.c.regen,    lv:'lv2',   cs:'cs2', lvtxt:'Niv.'+G.regenLvl,
+     eftxt:'→ '+getRegen().toFixed(1)+'/s', ef:'ef2'},
+    {id:'sb3',  cost:G.c.bee,      lv:'lv3',   cs:'cs3', lvtxt:'×'+G.bees},
+    {id:'sb4',  cost:G.c.hive,     lv:'lv4',   cs:'cs4', lvtxt:'×'+G.hives},
+    {id:'sb5',  cost:G.c.queen,    lv:'lv5',   cs:'cs5', lvtxt:'×'+G.queens},
+    {id:'sb6',  cost:G.c.flower,   lv:'lv6',   cs:'cs6', lvtxt:'×'+G.flowers},
+    {id:'sb7',  cost:G.c.apiary,   lv:'lv7',   cs:'cs7', lvtxt:'×'+G.apiaries},
+    {id:'sb8',  cost:G.c.shield,   lv:'lv8',   cs:'cs8', lvtxt:Math.floor(G.shield)+'/'+G.maxShield},
+    {id:'sb9',  cost:G.c.armor,    lv:'lv9',   cs:'cs9', lvtxt:'Niv.'+G.armorLvl},
+    {id:'sb10', cost:G.c.guardian, lv:'lv10x', cs:'cs10',lvtxt:'×'+G.guardians},
+  ];
+
+  items.forEach(function(it){
+    var btn = document.getElementById(it.id);
+    if(!btn) return;
+    var can = G.honey >= it.cost;
+    btn.className = 'sbtn' + (can ? '' : ' no');
+    var lvEl = document.getElementById(it.lv);
+    var csEl = document.getElementById(it.cs);
+    if(lvEl) lvEl.textContent = it.lvtxt;
+    if(csEl) csEl.textContent = fmt(it.cost);
+    if(it.ef && it.eftxt){
+      var efEl = document.getElementById(it.ef);
+      if(efEl) efEl.textContent = it.eftxt;
+    }
+  });
+
+  // Prestige button
+  document.getElementById('presbtn').disabled = G.honey < 5000;
+
+  // ═══ BEAR LOGIC ═══
+  var bearActive = G.shield <= 0 && G.maxShield > 0;
+  var bearDiv    = document.getElementById('bearWarning');
+  bearDiv.classList.toggle('on', bearActive);
+
+  var bee = document.getElementById('bee');
+  bee.style.filter = bearActive
+    ? 'drop-shadow(0 0 20px rgba(255,50,0,0.9)) sepia(0.5) hue-rotate(-20deg)'
+    : 'drop-shadow(0 0 20px rgba(255,200,0,0.5))';
+
+  document.getElementById('hiveBg').style.boxShadow = bearActive
+    ? '0 0 80px rgba(255,0,0,0.25) inset, 0 0 40px rgba(255,0,0,0.1)'
+    : '';
+
+  if(bearActive && !G.bearWasActive){
+    addEv('atk', '🐻', 'The bear is raiding the hive! Production −50%!');
+toast('🐻 The bear is nearby! Recharge your shield!');
+
+addEv('inf', '🛡️', 'Shield restored — the bear is gone!');
+toast('✅ The bear has been driven away! Production back to normal!');
+
+  }
+  G.bearWasActive = bearActive;
+// ✅ ICI c'est bon
+var hive = document.getElementById('hiveBg');
+
+if(G.energy <= 0){
+  hive.style.opacity = "0.5";
+  hive.style.pointerEvents = "none";
+} else {
+  hive.style.opacity = "1";
+  hive.style.pointerEvents = "auto";
+}
+
+}
+// ═══════════════════════════════════════
+//  RENDER ACHIEVEMENTS
+// ═══════════════════════════════════════
+function renderAchs(){
+  var el = document.getElementById('achlist');
+  if(!el) return;
+  var done  = ACHS.filter(function(a){ return unlocked[a.id]; }).length;
+  var total = ACHS.length;
+  el.innerHTML =
+    '<div style="text-align:center;margin-bottom:12px;padding:10px;background:rgba(255,180,0,0.05);border:1px solid var(--border);border-radius:10px;">' +
+    '<span style="font-size:1.1rem;font-weight:800;color:var(--gold)">'+done+' / '+total+'</span>' +
+    '<span style="font-size:0.7rem;color:var(--text3);display:block;margin-top:2px;">succès débloqués</span>' +
+    '<div class="bt" style="margin-top:6px"><div class="bf xp" style="width:'+Math.floor(done/total*100)+'%"></div></div>' +
+    '</div>' +
+    ACHS.map(function(a){
+      var u = unlocked[a.id];
+      return '<div class="ach ' + (u ? 'u' : 'l') + '">' +
+        '<span class="ai">' + a.ico + '</span>' +
+        '<div><div class="an">' + a.n + '</div><div class="ad">' + a.d + '</div></div>' +
+        (u ? '<span class="abadge">✓</span>' : '') +
+        '</div>';
+    }).join('');
+}
+
+// ═══════════════════════════════════════
+//  RENDER STATS
+// ═══════════════════════════════════════
+function renderStats(){
+  var el = document.getElementById('statsbox');
+  if(!el) return;
+  var elapsed = Math.floor((Date.now() - G.startTime) / 1000);
+ var rows = [
+  ['🍯 Current Honey',        fmt(G.honey)],
+  ['📦 Total Honey',          fmt(G.totalHoney)],
+  ['📈 Production/s',         getHPS().toFixed(2)],
+  ['👆 Honey/Click',          G.clickPow],
+  ['✨ Multiplier',           '×' + getMulti().toFixed(3)],
+  ['⭐ Level',                G.level + ' — ' + LVN[Math.min(G.level-1,LVN.length-1)]],
+  ['🐝 Bees',                 G.bees],
+  ['🏠 Hives',                G.hives],
+  ['👑 Queens',               G.queens],
+  ['🌸 Gardens',              G.flowers],
+  ['🏰 Royal Apiaries',       G.apiaries],
+  ['💂 Guardians',            G.guardians],
+  ['⚔️ Armor',               Math.floor(getArmor()*100) + '%'],
+  ['🛡️ Shield',              Math.floor(G.shield) + ' / ' + G.maxShield],
+  ['🚫 Blocked Attacks',      G.blocked],
+  ['💢 Damage Taken',         G.taken],
+  ['🖱️ Total Clicks',         fmt(G.totalClicks)],
+  ['😴 Total Rest Time',      G.totalRests],
+  ['🎲 Events',               G.evCount],
+  ['✨ Prestiges',            G.prestige],
+  ['⏱️ Playtime',             fmtTime(elapsed)],
+];
+
+  el.innerHTML = rows.map(function(r){
+    return '<div class="strow"><span class="stl">'+r[0]+'</span><span class="stv">'+r[1]+'</span></div>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════
+//  TABS RIGHT PANEL
+// ═══════════════════════════════════════
+function goTab(id, btn){
+  document.querySelectorAll('.tc').forEach(function(e){ e.classList.remove('on'); });
+  document.querySelectorAll('.tab').forEach(function(e){ e.classList.remove('on'); });
+  var tc = document.getElementById('tc-'+id);
+  if(tc) tc.classList.add('on');
+  if(btn) btn.classList.add('on');
+  if(id === 'ac') renderAchs();
+  if(id === 'st') renderStats();
+}
+
+// ═══════════════════════════════════════
+//  PAGE NAVIGATION
+// ═══════════════════════════════════════
+function goPage(page){
+  saveGame();
+  window.location.href = page;
+}
+
+// ═══════════════════════════════════════
+//  VFX
+// ═══════════════════════════════════════
+function spawnFloat(text, x, y){
+  var d = document.createElement('div');
+  d.className = 'floater';
+  d.textContent = text;
+  d.style.left = (x - 20) + 'px';
+  d.style.top  = (y - 30) + 'px';
+  document.body.appendChild(d);
+  setTimeout(function(){ d.remove(); }, 1100);
+}
+
+function spawnFB(){
+  var b = document.createElement('div');
+  b.className = 'fb';
+  b.textContent = '🐝';
+  var sx  = Math.random() * window.innerWidth;
+  var sy  = Math.random() * window.innerHeight;
+  var tx  = (Math.random() - 0.5) * 500;
+  var ty  = (Math.random() - 0.5) * 500;
+  var tr  = (Math.random() - 0.5) * 720;
+  var dur = 2 + Math.random() * 2.5;
+  b.style.cssText = 'left:'+sx+'px;top:'+sy+'px;--tx:'+tx+'px;--ty:'+ty+'px;--tr:'+tr+'deg;--dur:'+dur+'s;';
+  document.body.appendChild(b);
+  setTimeout(function(){ b.remove(); }, dur * 1000);
+}
+
+// ═══════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════
+var toastTimer = null;
+function toast(msg){
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ el.classList.remove('on'); }, 2800);
+}
+
+// ═══════════════════════════════════════
+//  SAVE / LOAD
+// ═══════════════════════════════════════
+function saveGame(){
+  try{
+    localStorage.setItem('hiveV3', JSON.stringify({G:G, u:Object.keys(unlocked)}));
+  }catch(e){}
+}
+
+function loadGame(){
+  try{
+    var raw = localStorage.getItem('hiveV3');
+    if(!raw) return false;
+    var data = JSON.parse(raw);
+    if(data.G){
+      // Merge pour ne pas perdre les nouvelles clés
+      Object.keys(data.G).forEach(function(k){ G[k] = data.G[k]; });
+    }
+    if(data.u){
+      unlocked = {};
+      data.u.forEach(function(id){ unlocked[id] = true; });
+    }
+    return true;
+  }catch(e){ return false; }
+}
+
+function exportSave(){
+  try{
+    var str  = btoa(unescape(encodeURIComponent(JSON.stringify({G:G, u:Object.keys(unlocked)}))));
+    var blob = new Blob([str], {type:'text/plain'});
+    var a    = document.createElement('a');
+    a.href   = URL.createObjectURL(blob);
+    a.download = 'hive_save_' + Date.now() + '.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    toast('📤 Sauvegarde exportée !');
+  }catch(e){ alert('Erreur export : ' + e); }
+}
+
+function loadFile(event){
+  var file = event.target.files[0];
+  if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      var str  = e.target.result;
+      var data = JSON.parse(decodeURIComponent(escape(atob(str))));
+      if(data.G) Object.keys(data.G).forEach(function(k){ G[k] = data.G[k]; });
+      if(data.u){
+        unlocked = {};
+        data.u.forEach(function(id){ unlocked[id] = true; });
+      }
+      saveGame();
+      updateUI();
+      renderLog();
+      renderAchs();
+      renderStats();
+      toast('✅ Backup successfully imported !');
+    }catch(err){
+      alert('❌ Invalid backup file!');
+    }
+    // Reset l'input pour pouvoir recharger le même fichier
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+function hardReset(){
+  if(!confirm('⚠️ Reset complet — Toute la progression sera perdue.\nConfirmer ?')) return;
+  localStorage.removeItem('hiveV3');
+  G = {
+    honey:0, totalHoney:0,
+    energy:100, maxEnergy:100,
+    shield:0, maxShield:0,
+    xp:0, level:1,
+    prestige:0, presMult:1,
+    clickPow:1, clickLvl:1,
+    bees:1, hives:0, queens:0, flowers:0, apiaries:0, guardians:0,
+    regenLvl:1, energyLvl:1, armorLvl:0,
+    c:{click:10,energy:30,regen:45,bee:20,hive:50,queen:200,flower:500,apiary:2000,shield:40,armor:80,guardian:350},
+    totalClicks:0, totalRests:0, blocked:0, taken:0, evCount:0,
+    startTime:Date.now(), lastSave:Date.now(),
+    refillCount:0,
+    bearWasActive:false
+  };
+  unlocked = {};
+  evs      = [];
+  updateUI();
+  renderLog();
+  renderAchs();
+  renderStats();
+  toast('🗑️ Reset complet effectué');
+}
+
+// ═══════════════════════════════════════
+//  OFFLINE EARNINGS
+// ═══════════════════════════════════════
+function closeOff(){
+  document.getElementById('offmod').classList.add('hidden');
+}
+
+function checkOffline(){
+  try{
+    var raw = localStorage.getItem('hiveV3');
+    if(!raw) return;
+    var data = JSON.parse(raw);
+    if(!data.G || !data.G.lastSave) return;
+    var diff = (Date.now() - data.G.lastSave) / 1000;
+    if(diff < 30) return;
+    var offHPS = (
+      (data.G.bees||0)*0.5 +
+      (data.G.hives||0)*2 +
+      (data.G.queens||0)*10 +
+      (data.G.apiaries||0)*20
+    ) * (data.G.presMult||1);
+    var earned = Math.floor(offHPS * Math.min(diff, 86400)); // max 24h
+    if(earned <= 0) return;
+    G.honey      += earned;
+    G.totalHoney += earned;
+    var timeStr   = fmtTime(Math.floor(diff));
+    document.getElementById('offtxt').innerHTML =
+      'Absent pendant <b>' + timeStr + '</b><br>' +
+      'Vos abeilles ont produit<br>' +
+      '<span style="font-size:1.3rem;color:var(--gold);font-weight:800">+' + fmt(earned) + ' 🍯</span>';
+    document.getElementById('offmod').classList.remove('hidden');
+  }catch(e){}
+}
+
+// ═══════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════
+(function init(){
+  checkOffline();
+  loadGame();
+  updateUI();
+  renderLog();
+  renderAchs();
+  renderStats();
+  addEv('inf', '🐝', 'Welcome to Hive Clicker V3!');
+  // Fermer le modal offline si pas d'offline
+  if(document.getElementById('offmod').classList.contains('hidden')){
+    // ok
+  }
+})();
+</script>
+</body>
+</html>
